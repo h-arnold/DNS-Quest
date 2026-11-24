@@ -13,6 +13,10 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  # actions/deploy-pages@v4 lists the run's artifacts via the Actions API;
+  # without actions: read that lookup returns empty ("Found 0 artifact(s)")
+  # and the deploy fails with "No artifacts named github-pages were found".
+  actions: read
 
 concurrency:
   group: pages
