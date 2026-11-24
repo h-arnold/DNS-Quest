@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DNS Quest | OCR GCSE J277 Interactive Network Adventure</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="min-h-screen lg:h-screen lg:overflow-hidden flex flex-col font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200">
+
+  <header class="bg-slate-950/90 border-b border-slate-800/90 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0 z-20">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-inner">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-sm sm:text-base font-bold tracking-tight text-slate-100">DNS QUEST</h1>
+          <span class="text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">OCR GCSE J277</span>
+        </div>
+        <p class="text-xs text-slate-400 hidden sm:block">Guide a DNS query from browser URL to resolved IP address</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
+        <span class="text-xs text-slate-400">Progress:</span>
+        <div class="w-20 sm:w-28 h-2 bg-slate-800 rounded-full overflow-hidden">
+          <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 transition-all duration-500" style="width: 10%"></div>
+        </div>
+        <span id="stageBadge" class="text-xs font-mono font-semibold text-emerald-400">0 / 8</span>
+      </div>
+
+      <button id="soundToggleBtn" type="button" title="Toggle Retro Terminal Audio" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition flex items-center gap-1.5 text-xs">
+        <svg id="soundOnIcon" class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+        </svg>
+        <svg id="soundOffIcon" class="w-4 h-4 text-slate-500 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+        </svg>
+        <span class="hidden md:inline font-mono">SFX</span>
+      </button>
+
+      <button id="examNotesBtn" type="button" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-200 text-xs font-medium transition flex items-center gap-1.5">
+        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <span>J277 Key Concepts</span>
+      </button>
+
+      <button id="resetBtn" type="button" class="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-medium transition flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>Reset</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-1 flex flex-col lg:flex-row min-h-0 overflow-y-auto lg:overflow-hidden">
+
+    <!-- LEFT PANEL: ZORK-STYLE CRT TERMINAL (45%) -->
+    <section class="w-full lg:w-[45%] flex flex-col crt-terminal crt-scanlines border-b lg:border-b-0 lg:border-r border-slate-800 min-h-[540px] lg:min-h-0 lg:h-full">
+
+      <div class="bg-slate-950/90 border-b border-emerald-500/20 px-4 py-2.5 font-mono text-xs shrink-0 z-20">
+        <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1.5">
+          <span class="flex items-center gap-1.5 text-emerald-400 font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            PACKET TELEMETRY HUD
+          </span>
+          <span id="hudStats" class="text-slate-400">Hop Counter: <strong class="text-emerald-400">0</strong> / 8 optimal | Errors: <strong class="text-slate-200">0</strong></span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-900/90 border border-slate-800 rounded-xl p-2">
+          <div>
+            <div class="text-[10px] uppercase text-slate-500">Target Domain</div>
+            <div class="text-slate-100 font-semibold truncate" title="www.wwt.org.uk">www.wwt.org.uk</div>
+          </div>
+          <div>
+            <div class="text-[10px] uppercase text-slate-500">Resolved IP</div>
+            <div id="hudResolvedIp" class="text-amber-400 font-semibold">??? (Unknown)</div>
+          </div>
+          <div>
+            <div class="text-[10px] uppercase text-slate-500">Current Node</div>
+            <div id="hudCurrentNode" class="text-cyan-300 font-semibold truncate">Client Device (Browser)</div>
+          </div>
+          <div>
+            <div class="text-[10px] uppercase text-slate-500">Hop Counter</div>
+            <div id="hudPacketStatus" class="text-emerald-400 font-semibold truncate">0 / 8 steps</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="terminalLog" class="flex-1 overflow-y-auto p-4 sm:p-5 font-mono text-sm leading-relaxed space-y-4 z-20"></div>
+
+      <div class="bg-slate-950/85 border-t border-slate-800/90 px-4 pt-2.5 pb-2 shrink-0 z-20">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400">Available Dispatch Actions (Click or Type):</span>
+          <button id="hintQuickBtn" type="button" class="text-[11px] font-mono text-amber-400 hover:text-amber-300 underline underline-offset-2">Need a hint?</button>
+        </div>
+        <div id="quickActionsContainer" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <form id="commandForm" class="bg-slate-950 border-t border-emerald-500/30 px-4 py-3 flex items-center gap-2 shrink-0 z-20">
+        <span class="font-mono text-emerald-400 font-bold text-base select-none">&gt;</span>
+        <input id="commandInput" type="text" autocomplete="off" spellcheck="false" placeholder="Type a command (e.g. LOOK, INSPECT PACKET, CHECK CACHE, QUERY ROOT, CONNECT WEBSERVER)..." class="flex-1 bg-transparent font-mono text-sm text-emerald-200 placeholder-slate-600 focus:outline-none" />
+        <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-slate-950 font-mono font-bold text-xs tracking-wide transition shadow-md shadow-emerald-950">EXECUTE</button>
+      </form>
+    </section>
+
+    <!-- RIGHT PANEL: LIVE NETWORK GRAPH & CACHE INSPECTOR (55%) -->
+    <section class="w-full lg:w-[55%] flex flex-col blueprint-grid min-h-[580px] lg:min-h-0 lg:h-full">
+
+      <div class="bg-slate-900/85 backdrop-blur border-b border-slate-800 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-200">Live DNS Hierarchy &amp; Routing Map</span>
+          <span id="graphStatusBadge" class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Fog of War Active</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 text-[11px] text-slate-300">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border border-dashed border-slate-500 bg-slate-800/60"></span>Undiscovered</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span>Active</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>Completed/Cached</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-700 border border-red-500"></span>Overloaded</span>
+        </div>
+      </div>
+
+      <div class="relative flex-1 flex items-center justify-center p-2 sm:p-4 min-h-[320px] overflow-hidden">
+        <div id="nodeInspectorCard" class="hidden absolute top-3 left-3 right-3 sm:right-auto sm:w-80 bg-slate-900/95 backdrop-blur border border-slate-700 rounded-2xl p-3.5 shadow-2xl z-20">
+          <div class="flex items-start justify-between gap-2 mb-1">
+            <div>
+              <span id="inspectorTag" class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">DNS Tier</span>
+              <h3 id="inspectorTitle" class="text-sm font-bold text-slate-100 mt-1">Node Name</h3>
+            </div>
+            <button id="closeInspectorBtn" type="button" class="text-slate-400 hover:text-slate-200 p-1 rounded-lg">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+          <p id="inspectorDesc" class="text-xs text-slate-300 leading-relaxed mb-2"></p>
+          <div id="inspectorIp" class="text-[11px] font-mono text-emerald-400 bg-slate-950/80 px-2.5 py-1 rounded-lg border border-slate-800"></div>
+        </div>
+
+        <svg id="networkSvg" viewBox="0 0 820 470" preserveAspectRatio="xMidYMid meet" class="w-full h-full max-h-[470px] select-none">
+          <defs>
+            <marker id="arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#475569" /></marker>
+            <marker id="arrow-cyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#22d3ee" /></marker>
+            <marker id="arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#10b981" /></marker>
+            <marker id="arrow-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#f59e0b" /></marker>
+            <marker id="arrow-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#fbbf24" /></marker>
+            <marker id="arrow-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#f43f5e" /></marker>
+            <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          <text x="115" y="28" text-anchor="middle" fill="#64748b" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600">CLIENT LAN</text>
+          <line x1="225" y1="18" x2="225" y2="452" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4" />
+          <text x="350" y="28" text-anchor="middle" fill="#64748b" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600">ISP NETWORK</text>
+          <line x1="475" y1="18" x2="475" y2="452" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4" />
+          <text x="645" y="28" text-anchor="middle" fill="#64748b" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600">GLOBAL DNS HIERARCHY &amp; WEB</text>
+
+          <g id="edgesLayer">
+            <path id="edge-client-cache" d="M 115 246 L 115 326" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrow-muted)" />
+            <g id="label-client-cache" class="opacity-0 transition-opacity duration-300">
+              <rect x="48" y="274" width="134" height="20" rx="6" fill="#0f172a" stroke="#f59e0b" stroke-width="1" />
+              <text id="labelText-client-cache" x="115" y="287" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="JetBrains Mono, monospace">1. Local Cache Check</text>
+            </g>
+
+            <path id="edge-client-resolver" d="M 185 210 L 274 210" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrow-muted)" />
+            <g id="label-client-resolver" class="opacity-0 transition-opacity duration-300">
+              <rect x="184" y="182" width="92" height="20" rx="6" fill="#0f172a" stroke="#22d3ee" stroke-width="1" />
+              <text id="labelText-client-resolver" x="230" y="195" text-anchor="middle" fill="#67e8f9" font-size="9.5" font-family="JetBrains Mono, monospace">2. DNS Query</text>
+            </g>
+
+            <path id="edge-resolver-root" d="M 418 188 L 534 94" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="4 4" />
+            <g id="label-resolver-root" class="opacity-0 transition-opacity duration-300">
+              <rect x="408" y="114" width="140" height="20" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1" />
+              <text id="labelText-resolver-root" x="478" y="127" text-anchor="middle" fill="#6ee7b7" font-size="9.5" font-family="JetBrains Mono, monospace">Referral: .uk TLD</text>
+            </g>
+
+            <path id="edge-resolver-tld" d="M 424 205 L 534 188" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="4 4" />
+            <g id="label-resolver-tld" class="opacity-0 transition-opacity duration-300">
+              <rect x="418" y="167" width="132" height="20" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1" />
+              <text id="labelText-resolver-tld" x="484" y="180" text-anchor="middle" fill="#6ee7b7" font-size="9.5" font-family="JetBrains Mono, monospace">Referral: ns1.wwt.org.uk</text>
+            </g>
+
+            <path id="edge-resolver-auth" d="M 424 226 L 534 286" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="4 4" />
+            <g id="label-resolver-auth" class="opacity-0 transition-opacity duration-300">
+              <rect x="410" y="264" width="144" height="20" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1" />
+              <text id="labelText-resolver-auth" x="482" y="277" text-anchor="middle" fill="#6ee7b7" font-size="9.5" font-family="JetBrains Mono, monospace">A Record: 172.67.182.44</text>
+            </g>
+
+            <path id="edge-client-web" d="M 162 242 C 245 365, 325 415, 534 415" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-dasharray="4 4" />
+            <g id="label-client-web" class="opacity-0 transition-opacity duration-300">
+              <rect x="275" y="398" width="166" height="22" rx="7" fill="#0f172a" stroke="#10b981" stroke-width="1.2" />
+              <text id="labelText-client-web" x="358" y="412" text-anchor="middle" fill="#34d399" font-size="10" font-family="JetBrains Mono, monospace" font-weight="600">HTTPS GET /index.html</text>
+            </g>
+
+            <path id="errorPulsePath" d="" fill="none" stroke="#f43f5e" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#arrow-rose)" class="opacity-0" />
+            <g id="swarmLayer"></g>
+          </g>
+
+          <g id="nodesLayer">
+            <g id="node-client" class="node-group" data-node="client" transform="translate(45, 174)">
+              <rect class="active-halo" x="-4" y="-4" width="148" height="80" rx="18" fill="none" stroke="#22d3ee" stroke-width="2" />
+              <rect class="node-box" width="140" height="72" rx="14" fill="#0f172a" stroke="#22d3ee" stroke-width="2.2" />
+              <text x="70" y="23" text-anchor="middle" fill="#38bdf8" font-size="10" font-family="JetBrains Mono, monospace" font-weight="700">CLIENT BROWSER</text>
+              <text x="70" y="41" text-anchor="middle" fill="#f8fafc" font-size="11.5" font-weight="600">Student Laptop</text>
+              <text x="70" y="58" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-family="JetBrains Mono, monospace">192.168.1.42</text>
+              <g id="badge-client" class="hidden"><circle cx="132" cy="8" r="9" fill="#22d3ee" stroke="#fff" stroke-width="1" /><text x="132" y="11.5" text-anchor="middle" fill="#0f172a" font-size="9" font-weight="bold" font-family="JetBrains Mono, monospace">P</text></g>
+              <g id="check-client" class="hidden"><circle cx="132" cy="8" r="9" fill="#10b981" stroke="#fff" stroke-width="1" /><text x="132" y="11.5" text-anchor="middle" fill="#0f172a" font-size="10" font-weight="bold" font-family="JetBrains Mono, monospace">&#10003;</text></g>
+            </g>
+
+            <g id="node-localCache" class="node-group" data-node="localCache" transform="translate(45, 330)">
+              <rect class="active-halo hidden" x="-4" y="-4" width="148" height="72" rx="18" fill="none" stroke="#22d3ee" stroke-width="2" />
+              <rect class="node-box" width="140" height="64" rx="14" fill="#0f172a" stroke="#475569" stroke-width="1.8" />
+              <text x="70" y="22" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="JetBrains Mono, monospace" font-weight="700">OS / BROWSER</text>
+              <text x="70" y="39" text-anchor="middle" fill="#f1f5f9" font-size="11.5" font-weight="600">Local DNS Cache</text>
+              <text id="nodeSub-localCache" x="70" y="54" text-anchor="middle" fill="#f59e0b" font-size="9.5" font-family="JetBrains Mono, monospace">TTL: 0s (Expired)</text>
+              <g id="badge-localCache" class="hidden"><circle cx="132" cy="8" r="9" fill="#22d3ee" stroke="#fff" stroke-width="1" /><text x="132" y="11.5" text-anchor="middle" fill="#0f172a" font-size="9" font-weight="bold" font-family="JetBrains Mono, monospace">P</text></g>
+              <g id="check-localCache" class="hidden"><circle cx="132" cy="8" r="9" fill="#10b981" stroke="#fff" stroke-width="1" /><text x="132" y="11.5" text-anchor="middle" fill="#0f172a" font-size="10" font-weight="bold" font-family="JetBrains Mono, monospace">&#10003;</text></g>
+            </g>
+
+            <g id="node-resolver" class="node-group" data-node="resolver" transform="translate(280, 174)">
+              <rect class="active-halo hidden" x="-4" y="-4" width="148" height="80" rx="18" fill="none" stroke="#22d3ee" stroke-width="2" />
+              <rect class="node-box" width="140" height="72" rx="14" fill="#0f172a" stroke="#475569" stroke-width="1.8" />
+              <text x="70" y="23" text-anchor="middle" fill="#a78bfa" font-size="10" font-family="JetBrains Mono, monospace" font-weight="700">ISP RESOLVER</text>
+              <text x="70" y="41" text-anchor="middle" fill="#f1f5f9" font-size="11.5" font-weight="600">Recursive DNS</text>
+              <text x="70" y="58" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-family="JetBrains Mono, monospace">8.8.8.8 / ISP DNS</text>
+              <g id="badge-resolver" class="hidden"><circle cx="132" cy="8" r="9" fill="#22d3ee" stroke="#fff" stroke-width="1" /><text x="132" y="11.5" text-anchor="middle" fill="#0f172a" font-size="9" font-weight="bold" font-family="JetBrains Mono, monospace">P</text></g>
+              <g id="check-resolver" class="hidden"><circle cx="132" cy="8" r="9" fill="#10b981" stroke="#fff" stroke-width="1" /><text x="132" y="11.5" text-anchor="middle" fill="#0f172a" font-size="10" font-weight="bold" font-family="JetBrains Mono, monospace">&#10003;</text></g>
+            </g>
+
+            <g id="node-root" class="node-group opacity-40" data-node="root" transform="translate(540, 48)">
+              <rect class="active-halo hidden" x="-4" y="-4" width="218" height="72" rx="18" fill="none" stroke="#22d3ee" stroke-width="2" />
+              <rect class="node-box" width="210" height="64" rx="14" fill="#0f172a" stroke="#475569" stroke-width="1.8" stroke-dasharray="5 4" />
+              <text x="105" y="21" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-family="JetBrains Mono, monospace" font-weight="700">TIER 1: ROOT HIERARCHY</text>
+              <text id="nodeTitle-root" x="105" y="39" text-anchor="middle" fill="#cbd5e1" font-size="11.5" font-weight="600">??? (Undiscovered)</text>
+              <text id="nodeSub-root" x="105" y="54" text-anchor="middle" fill="#64748b" font-size="9.5" font-family="JetBrains Mono, monospace">Awaiting Resolver</text>
+              <g id="badge-root" class="hidden"><circle cx="200" cy="8" r="9" fill="#22d3ee" stroke="#fff" stroke-width="1" /><text x="200" y="11.5" text-anchor="middle" fill="#0f172a" font-size="9" font-weight="bold" font-family="JetBrains Mono, monospace">P</text></g>
+              <g id="check-root" class="hidden"><circle cx="200" cy="8" r="9" fill="#10b981" stroke="#fff" stroke-width="1" /><text x="200" y="11.5" text-anchor="middle" fill="#0f172a" font-size="10" font-weight="bold" font-family="JetBrains Mono, monospace">&#10003;</text></g>
+            </g>
+
+            <g id="node-tld" class="node-group opacity-40" data-node="tld" transform="translate(540, 152)">
+              <rect class="active-halo hidden" x="-4" y="-4" width="218" height="72" rx="18" fill="none" stroke="#22d3ee" stroke-width="2" />
+              <rect class="node-box" width="210" height="64" rx="14" fill="#0f172a" stroke="#475569" stroke-width="1.8" stroke-dasharray="5 4" />
+              <text x="105" y="21" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-family="JetBrains Mono, monospace" font-weight="700">TIER 2: TOP-LEVEL DOMAIN</text>
+              <text id="nodeTitle-tld" x="105" y="39" text-anchor="middle" fill="#cbd5e1" font-size="11.5" font-weight="600">??? (Undiscovered)</text>
+              <text id="nodeSub-tld" x="105" y="54" text-anchor="middle" fill="#64748b" font-size="9.5" font-family="JetBrains Mono, monospace">Requires Root Referral</text>
+              <g id="badge-tld" class="hidden"><circle cx="200" cy="8" r="9" fill="#22d3ee" stroke="#fff" stroke-width="1" /><text x="200" y="11.5" text-anchor="middle" fill="#0f172a" font-size="9" font-weight="bold" font-family="JetBrains Mono, monospace">P</text></g>
+              <g id="check-tld" class="hidden"><circle cx="200" cy="8" r="9" fill="#10b981" stroke="#fff" stroke-width="1" /><text x="200" y="11.5" text-anchor="middle" fill="#0f172a" font-size="10" font-weight="bold" font-family="JetBrains Mono, monospace">&#10003;</text></g>
+            </g>
+
+            <g id="node-auth" class="node-group opacity-40" data-node="auth" transform="translate(540, 256)">
+              <rect class="active-halo hidden" x="-4" y="-4" width="218" height="72" rx="18" fill="none" stroke="#22d3ee" stroke-width="2" />
+              <rect class="node-box" width="210" height="64" rx="14" fill="#0f172a" stroke="#475569" stroke-width="1.8" stroke-dasharray="5 4" />
+              <text x="105" y="21" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-family="JetBrains Mono, monospace" font-weight="700">TIER 3: AUTHORITATIVE NS</text>
+              <text id="nodeTitle-auth" x="105" y="39" text-anchor="middle" fill="#cbd5e1" font-size="11.5" font-weight="600">??? (Undiscovered)</text>
+              <text id="nodeSub-auth" x="105" y="54" text-anchor="middle" fill="#64748b" font-size="9.5" font-family="JetBrains Mono, monospace">Requires TLD Referral</text>
+              <g id="servfail-auth" class="hidden">
+                <circle cx="200" cy="8" r="10" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.5" />
+                <text x="200" y="12" text-anchor="middle" fill="#fecaca" font-size="7" font-weight="bold" font-family="JetBrains Mono, monospace">!</text>
+                <rect x="152" y="-14" width="56" height="14" rx="4" fill="#450a0a" stroke="#ef4444" stroke-width="1" />
+                <text x="180" y="-4" text-anchor="middle" fill="#fca5a5" font-size="7.5" font-weight="bold" font-family="JetBrains Mono, monospace">SERVFAIL</text>
+              </g>
+              <g id="badge-auth" class="hidden"><circle cx="200" cy="8" r="9" fill="#22d3ee" stroke="#fff" stroke-width="1" /><text x="200" y="11.5" text-anchor="middle" fill="#0f172a" font-size="9" font-weight="bold" font-family="JetBrains Mono, monospace">P</text></g>
+              <g id="check-auth" class="hidden"><circle cx="200" cy="8" r="9" fill="#10b981" stroke="#fff" stroke-width="1" /><text x="200" y="11.5" text-anchor="middle" fill="#0f172a" font-size="10" font-weight="bold" font-family="JetBrains Mono, monospace">&#10003;</text></g>
+            </g>
+
+            <g id="node-webserver" class="node-group opacity-40" data-node="webserver" transform="translate(540, 380)">
+              <rect class="active-halo hidden" x="-4" y="-4" width="218" height="74" rx="18" fill="none" stroke="#10b981" stroke-width="2" />
+              <rect class="node-box" width="210" height="66" rx="14" fill="#0f172a" stroke="#475569" stroke-width="1.8" stroke-dasharray="5 4" />
+              <text x="105" y="21" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-family="JetBrains Mono, monospace" font-weight="700">DESTINATION HOST</text>
+              <text id="nodeTitle-webserver" x="105" y="39" text-anchor="middle" fill="#cbd5e1" font-size="11.5" font-weight="600">Web Server (IP Unknown)</text>
+              <text id="nodeSub-webserver" x="105" y="55" text-anchor="middle" fill="#64748b" font-size="9.5" font-family="JetBrains Mono, monospace">Port 443 (HTTPS)</text>
+              <g id="badge-webserver" class="hidden"><circle cx="200" cy="8" r="9" fill="#10b981" stroke="#fff" stroke-width="1" /><text x="200" y="11.5" text-anchor="middle" fill="#0f172a" font-size="9" font-weight="bold" font-family="JetBrains Mono, monospace">P</text></g>
+              <g id="check-webserver" class="hidden"><circle cx="200" cy="8" r="9" fill="#10b981" stroke="#fff" stroke-width="1" /><text x="200" y="11.5" text-anchor="middle" fill="#0f172a" font-size="10" font-weight="bold" font-family="JetBrains Mono, monospace">&#10003;</text></g>
+            </g>
+          </g>
+
+          <g id="animatedPacket" class="opacity-0 pointer-events-none" transform="translate(115, 210)">
+            <circle r="11" fill="#22d3ee" fill-opacity="0.25" />
+            <circle r="6" fill="#22d3ee" stroke="#ffffff" stroke-width="1.5" filter="url(#glow)" />
+            <rect id="packetPillBg" x="-48" y="-27" width="96" height="17" rx="5" fill="#0f172a" stroke="#22d3ee" stroke-width="1" />
+            <text id="packetPillText" x="0" y="-15.5" text-anchor="middle" fill="#e0f2fe" font-size="9" font-family="JetBrains Mono, monospace" font-weight="700">DNS QUERY</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="bg-slate-950/95 border-t border-slate-800 px-4 py-3 shrink-0">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+            </svg>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-200">Live DNS Cache &amp; Protocol Inspector</h2>
+          </div>
+          <span class="text-[11px] font-mono text-slate-400">Tip: Click any node above to inspect its role</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[11px] font-semibold text-cyan-300">Client Local Cache</span>
+              <span id="clientCacheBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">STALE (TTL 0s)</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-[11px]">
+                <thead>
+                  <tr class="text-slate-500 border-b border-slate-800">
+                    <th class="pb-1 font-medium">Domain</th>
+                    <th class="pb-1 font-medium">IP Address</th>
+                    <th class="pb-1 font-medium text-right">TTL (Time to Live)</th>
+                  </tr>
+                </thead>
+                <tbody id="clientCacheBody">
+                  <tr class="text-amber-300/90">
+                    <td class="pt-1.5">www.wwt.org.uk</td>
+                    <td class="pt-1.5">172.67.182.44</td>
+                    <td class="pt-1.5 text-right font-semibold">0s (EXPIRED)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[11px] font-semibold text-purple-300">ISP Recursive Resolver Cache</span>
+              <span id="resolverCacheBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">EMPTY</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-[11px]">
+                <thead>
+                  <tr class="text-slate-500 border-b border-slate-800">
+                    <th class="pb-1 font-medium">Domain</th>
+                    <th class="pb-1 font-medium">IP Address</th>
+                    <th class="pb-1 font-medium text-right">TTL (Time to Live)</th>
+                  </tr>
+                </thead>
+                <tbody id="resolverCacheBody">
+                  <tr class="text-slate-500 italic">
+                    <td colspan="3" class="pt-1.5">No cached record for www.wwt.org.uk</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Exam Reference Modal -->
+  <div id="examModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-mono uppercase tracking-wider text-emerald-400">OCR GCSE Computer Science (J277)</span>
+          <h2 class="text-lg font-bold text-slate-100">Domain Name System (DNS) Revision Guide</h2>
+        </div>
+        <button id="closeExamModalBtn" type="button" class="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div class="p-5 overflow-y-auto space-y-4 text-sm text-slate-300 leading-relaxed">
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3.5">
+          <h3 class="font-bold text-emerald-400 mb-1">1. Why do we need DNS?</h3>
+          <p>Humans find it easy to remember text-based domain names (like <code class="text-cyan-300">www.wwt.org.uk</code>), whereas network routers and computers require numerical <strong>IP addresses</strong> (like <code class="text-cyan-300">172.67.182.44</code>) to route data packets across the internet.</p>
+        </div>
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3.5">
+          <h3 class="font-bold text-cyan-400 mb-1">2. Hierarchical &amp; Distributed Database</h3>
+          <p>No single server holds every website on Earth. DNS is split across tiered servers worldwide: <strong>Local Cache</strong> &rarr; <strong>ISP Recursive Resolver</strong> &rarr; <strong>Root Servers (.)</strong> &rarr; <strong>Top-Level Domain Servers (.uk, .com)</strong> &rarr; <strong>Authoritative Name Servers</strong>.</p>
+        </div>
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3.5">
+          <h3 class="font-bold text-amber-400 mb-1">3. Caching &amp; Time to Live (TTL)</h3>
+          <p>Once an IP address is resolved, both the ISP resolver and your local browser cache it for a set <strong>TTL</strong> period. Subsequent visits result in a <strong>Cache Hit</strong>, reducing internet traffic and loading webpages significantly faster. Skipping the cache can overload and take down an authoritative server under a query flood (SERVFAIL).</p>
+        </div>
+      </div>
+      <div class="px-5 py-3 bg-slate-950 border-t border-slate-800 flex justify-end">
+        <button id="doneExamModalBtn" type="button" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-semibold text-xs transition">Back to DNS Quest</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application logic split into classic scripts (load order matters, shared global scope).
+       Works as a static GitHub Pages site — plain relative paths, no build step, no ES modules. -->
+  <script src="js/audio.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/terminal.js"></script>
+  <script src="js/visuals.js"></script>
+  <script src="js/actions.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
+

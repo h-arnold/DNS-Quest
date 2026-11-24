@@ -1,0 +1,41 @@
+# Publishes the repo root as a static site on GitHub Pages.
+# DNS Quest is vanilla HTML/CSS/JS with no build step, so the artifact is the
+# repo itself. Enable Pages once in repo settings: Settings -> Pages ->
+# Source: "GitHub Actions".
+name: Deploy DNS Quest to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static site (repo root, no build)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

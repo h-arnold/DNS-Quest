@@ -1,0 +1,27 @@
+{
+  "name": "DNS Quest (vanilla web + Playwright)",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": { "version": "latest" },
+    "ghcr.io/devcontainers/features/git:1": { "version": "latest" }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "pkill -f 'scripts/serve.mjs' 2>/dev/null || true; sleep 1; nohup node scripts/serve.mjs 8080 >/tmp/dns-quest-serve.log 2>&1 &",
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "DNS Quest (static site)",
+      "onAutoForward": "openBrowserOnce"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-playwright.playwright"],
+      "settings": {
+        "playwright.reuseBrowser": false
+      }
+    }
+  },
+  "remoteUser": "root",
+  "containerUser": "root"
+}

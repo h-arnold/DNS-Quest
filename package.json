@@ -1,0 +1,21 @@
+{
+  "name": "dns-quest",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "DNS Quest — a vanilla HTML/CSS/JS browser game (GCSE DNS resolver simulation), statically hosted on GitHub Pages. No build step.",
+  "scripts": {
+    "dev": "vite",
+    "serve": "node scripts/serve.mjs 8080",
+    "start": "node scripts/serve.mjs 8080",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "mcp": "playwright-mcp --browser chromium"
+  },
+  "devDependencies": {
+    "@playwright/mcp": "^0.0.86",
+    "@playwright/test": "^1.65.1",
+    "vite": "^8.3.8"
+  }
+}

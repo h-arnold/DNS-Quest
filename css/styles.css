@@ -1,0 +1,114 @@
+/* DNS Quest — custom styles (CRT scanlines, blueprint grid, node states, animations).
+   Tailwind utility classes come from the Play CDN; this file holds project-specific CSS. */
+    body {
+      background-color: #070b12;
+      color: #e2e8f0;
+    }
+
+    .crt-terminal {
+      background: radial-gradient(circle at 50% 20%, #0f1926 0%, #090d14 100%);
+      position: relative;
+    }
+
+    .crt-scanlines::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.22) 50%
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .blueprint-grid {
+      background-color: #0b111e;
+      background-image: radial-gradient(#1e293b 1.25px, transparent 1.25px);
+      background-size: 22px 22px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    .node-group {
+      transition: opacity 0.45s ease, transform 0.3s ease;
+      cursor: pointer;
+    }
+    .node-group:hover .node-box {
+      filter: brightness(1.15);
+    }
+
+    @keyframes pulseRing {
+      0% { transform: scale(0.96); opacity: 0.85; }
+      70% { transform: scale(1.06); opacity: 0; }
+      100% { transform: scale(1.06); opacity: 0; }
+    }
+
+    .active-halo {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pulseRing 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    }
+
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -24; }
+    }
+
+    .edge-animated {
+      stroke-dasharray: 6 6;
+      animation: dashFlow 0.9s linear infinite;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .log-entry {
+      animation: fadeSlideUp 0.25s ease-out forwards;
+    }
+
+    @keyframes overloadFlash {
+      0%, 100% { stroke: #7f1d1d; }
+      50% { stroke: #ef4444; }
+    }
+    .node-overloaded .node-box {
+      stroke: #7f1d1d !important;
+      stroke-width: 2.5 !important;
+      animation: overloadFlash 0.5s ease-in-out infinite;
+      fill: #1a0a0a !important;
+    }
+
+    @keyframes swarmFly {
+      0% { opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .swarm-packet {
+      animation: swarmFly 1.1s ease-in forwards;
+      pointer-events: none;
+    }
+
+    @keyframes errorFlash {
+      0%, 100% { stroke: #f43f5e; stroke-width: 3; }
+      50% { stroke: #fb7185; stroke-width: 4; }
+    }
+    .node-error-flash .node-box {
+      animation: errorFlash 0.4s ease-in-out 3;
+      stroke: #f43f5e !important;
+    }
