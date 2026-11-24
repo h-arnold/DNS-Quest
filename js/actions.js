@@ -11,9 +11,7 @@
         btn.textContent = act.label;
 
         let classes = 'px-2.5 py-1.5 rounded-lg font-mono text-xs font-semibold transition active:scale-95 border ';
-        if (act.style === 'primary') {
-          classes += 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border-emerald-500/40 shadow-sm';
-        } else if (act.style === 'danger') {
+        if (act.style === 'danger') {
           classes += 'bg-slate-900/90 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 border-slate-700 hover:border-rose-500/40';
         } else {
           classes += 'bg-slate-900/90 hover:bg-slate-800 text-cyan-300 border-slate-700';
