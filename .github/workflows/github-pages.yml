@@ -23,10 +23,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  # Upload and deploy are separate jobs on purpose: deploy-pages looks the
+  # "github-pages" artifact up in the Actions results index exactly once. In a
+  # single job that lookup runs ~0.5s after the upload finalizes and can still
+  # return an empty list ("Found 0 artifact(s)" / "No artifacts named
+  # github-pages were found"). A job boundary guarantees the artifact is fully
+  # indexed before deploy-pages runs.
+  upload:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -40,6 +43,13 @@ jobs:
         with:
           path: .
 
+  deploy:
+    needs: upload
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
